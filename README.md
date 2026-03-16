@@ -57,23 +57,38 @@ If you want to change settings (ports, paths, etc.):
 - ✅ Automatic authorization via iFlow CLI settings (installed on your PC)
 - ✅ CORS support for web applications
 
-## Installation and Setup for Kilo Code
+## 📖 Step-by-Step Guide
 
-### Step 1: Install iFlow CLI
+### Step 1: Register on iflow.cn
 
-Download and install iFlow CLI from the official website: https://iflow.cn
+1. Go to [iflow.cn](https://iflow.cn)
+2. Click the registration button
 
-### Step 2: Authorize in iFlow CLI
+![Registration step 1](reg1.jpg)
 
-Open a terminal and run the authorization command:
+![Registration step 2](reg2.jpg)
+
+3. Follow the instructions to create an account
+
+### Step 2: Install iFlow CLI
+
+Open a terminal (PowerShell or CMD) and run:
 
 ```bash
-iflow login
+npm i -g @iflow-ai/iflow-cli
 ```
 
-Follow the instructions to log in to your iFlow account.
+### Step 3: Authorize in iFlow CLI
 
-### Step 3: Start the Proxy Server
+Run the CLI with the command:
+
+```bash
+iflow
+```
+
+Follow the instructions to authorize via the website.
+
+### Step 4: Start the Proxy Server
 
 Two options are available to start the proxy server:
 
@@ -91,7 +106,7 @@ This file recompiles the program and starts it.
 
 The proxy server will start at: **http://127.0.0.1:8318**
 
-### Step 4: Configure Kilo Code
+### Step 5: Configure Kilo Code
 
 ![Kilo Code Setup](img.jpg)
 
