@@ -108,17 +108,88 @@ func modelsHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	
+	// Создаем запрос к iFlow API для получения списка моделей
+	userAgent := "iFlow-Cli"
+	timestamp := time.Now().UnixMilli()
+	signature := createSignature(userAgent, sessionID, timestamp, apikey)
+	
+	upstreamReq, err := http.NewRequest("GET", IFLOW_BASE_URL+"/models", nil)
+	if err != nil {
+		logToFile("✗ Models: Create upstream request: %v", err)
+		http.Error(w, "Create upstream: "+err.Error(), http.StatusInternalServerError)
+		return
+	}
+	
+	// Заголовки аутентификации для iFlow (включая специальные заголовки)
+	upstreamReq.Header.Set("Content-Type", "application/json")
+	upstreamReq.Header.Set("Authorization", "Bearer "+apikey)
+	upstreamReq.Header.Set("User-Agent", userAgent)
+	upstreamReq.Header.Set("session-id", sessionID)
+	upstreamReq.Header.Set("conversation-id", "")
+	upstreamReq.Header.Set("x-iflow-timestamp", strconv.FormatInt(timestamp, 10))
+	upstreamReq.Header.Set("x-iflow-signature", signature)
+	
+	// Выполняем запрос
+	client := &http.Client{Timeout: 30 * time.Second}
+	resp, err := client.Do(upstreamReq)
+	if err != nil {
+		logToFile("✗ Models: Upstream request: %v", err)
+		http.Error(w, "Upstream: "+err.Error(), http.StatusBadGateway)
+		return
+	}
+	defer resp.Body.Close()
+	
+	// Читаем тело ответа
+	respBody, err := io.ReadAll(resp.Body)
+	if err != nil {
+		logToFile("✗ Models: Read response body: %v", err)
+		http.Error(w, "Read response: "+err.Error(), http.StatusBadGateway)
+		return
+	}
+	
+	// Логируем полученный ответ для отладки
+	logToFile("← Models upstream response: %s", string(respBody))
+	
+	// Парсим ответ от API
+	var upstreamResponse ModelsResponse
+	if err := json.Unmarshal(respBody, &upstreamResponse); err != nil {
+		logToFile("✗ Models: Parse upstream response: %v", err)
+		http.Error(w, "Parse response: "+err.Error(), http.StatusBadGateway)
+		return
+	}
+	
+	// Добавляем захардкоженные модели, которые должны быть доступны
+	// (даже если они не возвращаются в списке API, они могут работать через прокси)
+	hardcodedModels := []ModelItem{
+		{ID: "glm-5", Object: "model", Created: 1770000000, OwnedBy: "iflow"},
+		{ID: "glm-4.7", Object: "model", Created: 1760000000, OwnedBy: "iflow"},
+		{ID: "kimi-k2.5", Object: "model", Created: 1769472000, OwnedBy: "moonshot"},
+		{ID: "kimi-k2-thinking", Object: "model", Created: 1762387200, OwnedBy: "moonshot"},
+		{ID: "minimax-m2.5", Object: "model", Created: 1750000000, OwnedBy: "minimax"},
+	}
+	
+	// Объединяем списки, убирая дубликаты
+	modelMap := make(map[string]ModelItem)
+	
+	// Сначала добавляем модели из API
+	for _, model := range upstreamResponse.Data {
+		modelMap[model.ID] = model
+	}
+	
+	// Затем добавляем захардкоженные модели (они перезапишут существующие, если есть)
+	for _, model := range hardcodedModels {
+		modelMap[model.ID] = model
+	}
+	
+	// Формируем итоговый список
+	var allModels []ModelItem
+	for _, model := range modelMap {
+		allModels = append(allModels, model)
+	}
+	
 	response := ModelsResponse{
 		Object: "list",
-		Data: []ModelItem{
-			{ID: "glm-5", Object: "model", Created: 1770000000, OwnedBy: "iflow"},
-			{ID: "glm-4.7", Object: "model", Created: 1760000000, OwnedBy: "iflow"},
-			{ID: "qwen3-coder-plus", Object: "model", Created: 1753228800, OwnedBy: "iflow"},
-			{ID: "deepseek-v3.2", Object: "model", Created: 1759104000, OwnedBy: "iflow"},
-			{ID: "kimi-k2.5", Object: "model", Created: 1769472000, OwnedBy: "moonshot"},
-			{ID: "kimi-k2-thinking", Object: "model", Created: 1762387200, OwnedBy: "moonshot"},
-			{ID: "minimax-m2.5", Object: "model", Created: 1750000000, OwnedBy: "minimax"},
-		},
+		Data:   allModels,
 	}
 	
 	// Логируем JSON ответ для отладки
@@ -127,7 +198,7 @@ func modelsHandler(w http.ResponseWriter, r *http.Request) {
 	
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(response)
-	logToFile("← Models: 200 OK")
+	logToFile("← Models: %d", resp.StatusCode)
 }
 
 // ─── /v1/chat/completions — ПРОСТОЙ ПРОКСИ БЕЗ ТРАНСФОРМАЦИЙ ───────────────
