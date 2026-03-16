@@ -9,27 +9,27 @@
 
 ## 🎯 Доступные модели
 
-| # | Модель | Провайдер | Context Window | Input ($/1M) | Output ($/1M) | Tier |
+| # | Модель | Провайдер | Context Window | Input ($/1M) | Output ($/1M) | Примечание |
 |---|--------|-----------|----------------|--------------|---------------|------|
-| 1 | `glm-5` | iflow (Zhipu) | 170K | ~~$0.72~~ **FREE** | ~~$2.20~~ **FREE** | 1 |
-| 2 | `qwen3-max` | iflow (Alibaba) | 256K | ~~$1.20~~ **FREE** | ~~$6.00~~ **FREE** | 1 |
-| 3 | `qwen3-max-preview` | iflow (Alibaba) | 256K | ~~$1.20~~ **FREE** | ~~$6.00~~ **FREE** | 1 |
-| 4 | `qwen3-235b-a22b-thinking-2507` | iflow (Alibaba) | 131K | ~~$0.70~~ **FREE** | ~~$8.40~~ **FREE** | 1 |
-| 5 | `deepseek-v3.2` | iflow (DeepSeek) | 164K | ~~$0.28~~ **FREE** | ~~$0.42~~ **FREE** | 1 |
-| 6 | `deepseek-r1` | iflow (DeepSeek) | 128K | ~~$0.55~~ **FREE** | ~~$2.19~~ **FREE** | 1 |
-| 7 | `qwen3-235b-a22b-instruct` | iflow (Alibaba) | 128K | ~~$0.21~~ **FREE** | ~~$1.09~~ **FREE** | 2 |
-| 8 | `qwen3-235b` | iflow (Alibaba) | 128K | ~~$0.21~~ **FREE** | ~~$1.09~~ **FREE** | 2 |
-| 9 | `kimi-k2-thinking` | moonshot | 256K | ~~$0.60~~ **FREE** | ~~$3.00~~ **FREE** | 2 |
-| 10 | `kimi-k2.5` | moonshot | 256K | ~~$0.60~~ **FREE** | ~~$3.00~~ **FREE** | 2 |
-| 11 | `qwen3-coder-plus` | iflow (Alibaba) | 998K | ~~$1.00~~ **FREE** | ~~$5.00~~ **FREE** | 2 |
-| 12 | `deepseek-v3` | iflow (DeepSeek) | 128K | ~~$0.28~~ **FREE** | ~~$0.88~~ **FREE** | 2 |
-| 13 | `kimi-k2` | iflow (Moonshot) | 256K | ~~$0.60~~ **FREE** | ~~$2.50~~ **FREE** | 3 |
-| 14 | `kimi-k2-0905` | iflow (Moonshot) | 256K | ~~$0.60~~ **FREE** | ~~$2.50~~ **FREE** | 3 |
-| 15 | `glm-4.7` | iflow (Zhipu) | 203K | ~~$0.06~~ **FREE** | ~~$0.40~~ **FREE** | 3 |
-| 16 | `qwen3-32b` | iflow (Alibaba) | 256K | ~~$0.08~~ **FREE** | ~~$0.24~~ **FREE** | 3 |
-| 17 | `minimax-m2.5` | minimax | 200K | ~~$0.30~~ **FREE** | ~~$1.20~~ **FREE** | 3 |
-| 18 | `qwen3-vl-plus` | iflow (Alibaba) | 128K | ~~$0.53~~ **FREE** | ~~$2.66~~ **FREE** | 4 |
-| 19 | `iflow-rome-30ba3b` | iflow | 128K | ~~$0.00~~ **FREE** | ~~$0.00~~ **FREE** | 4 |
+| 1 | `glm-5` | iflow (Zhipu) | 200K | ~~$0.80~~ **FREE** | ~~$2.56~~ **FREE** | Флагман Zhipu |
+| 2 | `qwen3-max` | iflow (Alibaba) | 256K | ~~$1.20~~ **FREE** | ~~$6.00~~ **FREE** | Рыночная цена (Intl) |
+| 3 | `qwen3-max-preview` | iflow (Alibaba) | 256K | ~~$1.20~~ **FREE** | ~~$6.00~~ **FREE** | - |
+| 4 | `qwen3-235b-thinking` | iflow (Alibaba) | 131K | ~~$0.26~~ **FREE** | ~~$0.90~~ **FREE** | 235B серия |
+| 5 | `deepseek-v3.2` | iflow (DeepSeek) | 128K | ~~$0.28~~ **FREE** | ~~$0.42~~ **FREE** | - |
+| 6 | `deepseek-r1` | iflow (DeepSeek) | 128K | ~~$0.55~~ **FREE** | ~~$2.19~~ **FREE** | - |
+| 7 | `qwen3-235b-instruct` | iflow (Alibaba) | 128K | ~~$0.21~~ **FREE** | ~~$1.09~~ **FREE** | - |
+| 8 | `qwen3-235b` | iflow (Alibaba) | 128K | ~~$0.21~~ **FREE** | ~~$1.09~~ **FREE** | - |
+| 9 | `kimi-k2-thinking` | moonshot | 131K | ~~$0.47~~ **FREE** | ~~$2.00~~ **FREE** | Сниженная цена |
+| 10 | `kimi-k2.5` | moonshot | 256K | ~~$0.45~~ **FREE** | ~~$2.20~~ **FREE** | Последняя Kimi |
+| 11 | `qwen3-coder-plus` | iflow (Alibaba) | 1024K | ~~$1.00~~ **FREE** | ~~$5.00~~ **FREE** | Long Context |
+| 12 | `deepseek-v3` | iflow (DeepSeek) | 128K | ~~$0.28~~ **FREE** | ~~$0.88~~ **FREE** | - |
+| 13 | `kimi-k2` | iflow (Moonshot) | 256K | ~~$0.60~~ **FREE** | ~~$2.50~~ **FREE** | Стандартный Tier |
+| 14 | `kimi-k2-0905` | iflow (Moonshot) | 256K | ~~$0.60~~ **FREE** | ~~$2.50~~ **FREE** | - |
+| 15 | `glm-4.7` | iflow (Zhipu) | 200K | ~~$0.06~~ **FREE** | ~~$0.40~~ **FREE** | Самая дешёвая |
+| 16 | `qwen3-32b` | iflow (Alibaba) | 256K | ~~$0.08~~ **FREE** | ~~$0.24~~ **FREE** | - |
+| 17 | `minimax-m2.5` | minimax | 200K | ~~$0.30~~ **FREE** | ~~$1.20~~ **FREE** | - |
+| 18 | `qwen3-vl-plus` | iflow (Alibaba) | 128K | ~~$0.53~~ **FREE** | ~~$2.66~~ **FREE** | Vision модель |
+| 19 | `iflow-rome-30ba3b` | iflow | 131K | ~~$0.00~~ **FREE** | ~~$0.00~~ **FREE** | Бесплатно (квота iflow) |
 
 > 💡 **Все модели полностью бесплатны и безлимитны через данный прокси!**
 
