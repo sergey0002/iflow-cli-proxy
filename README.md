@@ -1,6 +1,6 @@
 # iFlow Proxy Server
 
-A simple proxy server written in Go that provides unlimited access to GLM-5 and other models available in [iFlow CLI](https://iflow.cn) for your own purposes.
+A simple proxy server written in Go that provides unlimited access to GLM-5 and other models available in [iFlow CLI](https://iflow.cn) for your own purposes in a format compatible with OpenAI API.
 
 > ⚠️ **WARNING: Use at your own risk!**
 > The author is not responsible for the use of this software. You use it entirely at your own risk.
@@ -33,13 +33,17 @@ If you want to change settings (ports, paths, etc.):
 
 ## Supported Models
 
-- `glm-5` - main model
-- `glm-4.7`
-- `qwen3-coder-plus`
-- `deepseek-v3.2`
-- `kimi-k2.5`
-- `kimi-k2-thinking`
-- `minimax-m2.5`
+The proxy provides access to the following models in OpenAI-compatible format:
+
+- `glm-5` - main model (GLM-5)
+- `glm-4.7` - GLM-4.7
+- `qwen3-coder-plus` - Qwen 3 Coder Plus
+- `deepseek-v3.2` - DeepSeek V3.2
+- `kimi-k2.5` - Kimi K2.5
+- `kimi-k2-thinking` - Kimi K2 Thinking
+- `minimax-m2.5` - MiniMax M2.5
+
+All models are available through the iFlow CLI and can be used with unlimited requests.
 
 ## Installation and Setup for Kilo Code
 
