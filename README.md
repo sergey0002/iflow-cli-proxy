@@ -1,11 +1,37 @@
 # iFlow Proxy Server
 
-A simple proxy server written in Go that provides unlimited access to GLM-5 and other models available in [iFlow CLI](https://iflow.cn) for your own purposes in a format compatible with OpenAI API.
+A simple proxy server written in Go that provides **completely free unlimited** access to GLM-5 and other models available in [iFlow CLI](https://iflow.cn) for your own purposes in a format compatible with OpenAI API.
 
 > ⚠️ **WARNING: Use at your own risk!**
 > The author is not responsible for the use of this software. You use it entirely at your own risk.
 
 The proxy server uses authorization and endpoints from **iFlow CLI** to provide unlimited API requests to GLM-5 and other models in a format compatible with OpenAI API.
+
+## 🎯 Available Models
+
+| # | Model | Provider | Context Window | Input ($/1M) | Output ($/1M) | Tier |
+|---|--------|-----------|----------------|--------------|---------------|------|
+| 1 | `glm-5` | iflow (Zhipu) | 170K | ~~$0.72~~ **FREE** | ~~$2.20~~ **FREE** | 1 |
+| 2 | `qwen3-max` | iflow (Alibaba) | 256K | ~~$1.20~~ **FREE** | ~~$6.00~~ **FREE** | 1 |
+| 3 | `qwen3-max-preview` | iflow (Alibaba) | 256K | ~~$1.20~~ **FREE** | ~~$6.00~~ **FREE** | 1 |
+| 4 | `qwen3-235b-a22b-thinking-2507` | iflow (Alibaba) | 131K | ~~$0.70~~ **FREE** | ~~$8.40~~ **FREE** | 1 |
+| 5 | `deepseek-v3.2` | iflow (DeepSeek) | 164K | ~~$0.28~~ **FREE** | ~~$0.42~~ **FREE** | 1 |
+| 6 | `deepseek-r1` | iflow (DeepSeek) | 128K | ~~$0.55~~ **FREE** | ~~$2.19~~ **FREE** | 1 |
+| 7 | `qwen3-235b-a22b-instruct` | iflow (Alibaba) | 128K | ~~$0.21~~ **FREE** | ~~$1.09~~ **FREE** | 2 |
+| 8 | `qwen3-235b` | iflow (Alibaba) | 128K | ~~$0.21~~ **FREE** | ~~$1.09~~ **FREE** | 2 |
+| 9 | `kimi-k2-thinking` | moonshot | 256K | ~~$0.60~~ **FREE** | ~~$3.00~~ **FREE** | 2 |
+| 10 | `kimi-k2.5` | moonshot | 256K | ~~$0.60~~ **FREE** | ~~$3.00~~ **FREE** | 2 |
+| 11 | `qwen3-coder-plus` | iflow (Alibaba) | 998K | ~~$1.00~~ **FREE** | ~~$5.00~~ **FREE** | 2 |
+| 12 | `deepseek-v3` | iflow (DeepSeek) | 128K | ~~$0.28~~ **FREE** | ~~$0.88~~ **FREE** | 2 |
+| 13 | `kimi-k2` | iflow (Moonshot) | 256K | ~~$0.60~~ **FREE** | ~~$2.50~~ **FREE** | 3 |
+| 14 | `kimi-k2-0905` | iflow (Moonshot) | 256K | ~~$0.60~~ **FREE** | ~~$2.50~~ **FREE** | 3 |
+| 15 | `glm-4.7` | iflow (Zhipu) | 203K | ~~$0.06~~ **FREE** | ~~$0.40~~ **FREE** | 3 |
+| 16 | `qwen3-32b` | iflow (Alibaba) | 256K | ~~$0.08~~ **FREE** | ~~$0.24~~ **FREE** | 3 |
+| 17 | `minimax-m2.5` | minimax | 200K | ~~$0.30~~ **FREE** | ~~$1.20~~ **FREE** | 3 |
+| 18 | `qwen3-vl-plus` | iflow (Alibaba) | 128K | ~~$0.53~~ **FREE** | ~~$2.66~~ **FREE** | 4 |
+| 19 | `iflow-rome-30ba3b` | iflow | 128K | ~~$0.00~~ **FREE** | ~~$0.00~~ **FREE** | 4 |
+
+> 💡 **All models are completely free and unlimited through this proxy!**
 
 ## ⚠️ Important Limitations
 
@@ -30,20 +56,6 @@ If you want to change settings (ports, paths, etc.):
 - ✅ Streaming support
 - ✅ Automatic authorization via iFlow CLI settings (installed on your PC)
 - ✅ CORS support for web applications
-
-## Supported Models
-
-The proxy provides access to the following models in OpenAI-compatible format:
-
-- `glm-5` - main model (GLM-5)
-- `glm-4.7` - GLM-4.7
-- `qwen3-coder-plus` - Qwen 3 Coder Plus
-- `deepseek-v3.2` - DeepSeek V3.2
-- `kimi-k2.5` - Kimi K2.5
-- `kimi-k2-thinking` - Kimi K2 Thinking
-- `minimax-m2.5` - MiniMax M2.5
-
-All models are available through the iFlow CLI and can be used with unlimited requests.
 
 ## Installation and Setup for Kilo Code
 
