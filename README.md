@@ -1,39 +1,39 @@
 # iFlow Proxy Server
 
-Простейший прокси-сервер, написанный на Go, позволяющий получить безлимитный доступ к GLM-5 и другим моделям, доступным в [iFlow CLI](https://iflow.cn), для ваших собственных целей.
+A simple proxy server written in Go that provides unlimited access to GLM-5 and other models available in [iFlow CLI](https://iflow.cn) for your own purposes.
 
-> ⚠️ **ВНИМАНИЕ: Используйте на свой страх и риск!**
-> Автор не несет ответственности за применение данного программного обеспечения. Вы используете его исключительно под свою ответственность.
+> ⚠️ **WARNING: Use at your own risk!**
+> The author is not responsible for the use of this software. You use it entirely at your own risk.
 
-Прокси-сервер использует авторизацию и эндпоинты из **iFlow CLI** для предоставления безлимитных API запросов к моделям GLM-5 и другим в формате, совместимом с OpenAI API.
+The proxy server uses authorization and endpoints from **iFlow CLI** to provide unlimited API requests to GLM-5 and other models in a format compatible with OpenAI API.
 
-## ⚠️ Важные ограничения
+## ⚠️ Important Limitations
 
-- **Работает только на Windows** - на данный момент прокси-сервер настроен для работы только в операционной системе Windows
-- На Mac и Linux пути к файлам с ключами от CLI могут отличаться. При желании можно разобраться и дополнить исходный код для поддержки этих ОС
+- **Works only on Windows** - currently the proxy server is configured to work only on Windows operating system
+- On Mac and Linux, the paths to CLI key files may differ. If desired, you can investigate and extend the source code to support these operating systems
 
-## 🔧 Редактирование исходного кода
+## 🔧 Editing Source Code
 
-Если вы хотите изменить настройки (порты, пути и т.п.):
+If you want to change settings (ports, paths, etc.):
 
-1. Убедитесь, что на компьютере установлен **Go**
-2. Отредактируйте файл [`main.go`](main.go) по своему усмотрению
-3. Запустите файл [`rebuild-and-start.bat`](rebuild-and-start.bat)
-   - Он автоматически найдёт и остановит запущенный процесс
-   - Перекомпилирует программу
-   - Запустит прокси-сервер с новыми настройками
+1. Make sure **Go** is installed on your computer
+2. Edit the [`main.go`](main.go) file as needed
+3. Run the [`rebuild-and-start.bat`](rebuild-and-start.bat) file
+   - It will automatically find and stop the running process
+   - Recompile the program
+   - Start the proxy server with new settings
 
-## Возможности
+## Features
 
-- ✅ OpenAI-совместимый API (формат `/v1/chat/completions`)
-- ✅ Безлимитные запросы к моделям включая GLM5 через iFlow CLI
-- ✅ Поддержка стриминга (streaming responses)
-- ✅ Автоматическая авторизация через настройки iFlow CLI (установленном на вашем пк)
-- ✅ CORS поддержка для веб-приложений
+- ✅ OpenAI-compatible API (`/v1/chat/completions` format)
+- ✅ Unlimited requests to models including GLM5 via iFlow CLI
+- ✅ Streaming support
+- ✅ Automatic authorization via iFlow CLI settings (installed on your PC)
+- ✅ CORS support for web applications
 
-## Поддерживаемые модели
+## Supported Models
 
-- `glm-5` - основная модель
+- `glm-5` - main model
 - `glm-4.7`
 - `qwen3-coder-plus`
 - `deepseek-v3.2`
@@ -41,135 +41,139 @@
 - `kimi-k2-thinking`
 - `minimax-m2.5`
 
-## Установка и настройка для Kilo Code
+## Installation and Setup for Kilo Code
 
-### Шаг 1: Установка iFlow CLI
+### Step 1: Install iFlow CLI
 
-Скачайте и установите iFlow CLI с официального сайта: https://iflow.cn
+Download and install iFlow CLI from the official website: https://iflow.cn
 
-### Шаг 2: Авторизация в iFlow CLI
+### Step 2: Authorize in iFlow CLI
 
-Откройте терминал и выполните команду авторизации:
+Open a terminal and run the authorization command:
 
 ```bash
 iflow login
 ```
 
-Следуйте инструкциям для входа в ваш аккаунт iFlow.
+Follow the instructions to log in to your iFlow account.
 
-### Шаг 3: Запуск прокси-сервера
+### Step 3: Start the Proxy Server
 
-Для запуска прокси-сервера доступны два варианта:
+Two options are available to start the proxy server:
 
-**Вариант 1: Быстрый запуск (без перекомпиляции)**
+**Option 1: Quick Start (without recompilation)**
 ```bash
 start.bat
 ```
-Этот файл убивает старый процесс и запускает уже скомпилированный `iflow-proxy.exe`.
+This file kills the old process and starts the already compiled `iflow-proxy.exe`.
 
-**Вариант 2: Перекомпиляция и запуск**
+**Option 2: Recompile and Start**
 ```bash
 rebuild-and-start.bat
 ```
-Этот файл перекомпилирует программу и запустит её.
+This file recompiles the program and starts it.
 
-Прокси-сервер запустится на адресе: **http://127.0.0.1:8318**
+The proxy server will start at: **http://127.0.0.1:8318**
 
-### Шаг 4: Настройка Kilo Code
+### Step 4: Configure Kilo Code
 
-![Настройка Kilo Code](img.jpg)
+![Kilo Code Setup](img.jpg)
 
-1. Откройте настройки Kilo Code
-2. В поле **API Endpoint** укажите:
+1. Open Kilo Code settings
+2. In the **API Endpoint** field, specify:
    ```
    http://127.0.0.1:8318/v1
    ```
-3. В поле **API Token** введите **любое значение** (например: `dummy-token`)
-   - Токен не проверяется прокси-сервером, авторизация происходит через iFlow CLI
-4. Выберите модель: `glm-5` или любую другую из списка поддерживаемых
+3. In the **API Token** field, enter **any value** (e.g., `dummy-token`)
+   - The token is not verified by the proxy server, authorization occurs via iFlow CLI
+4. Select a model: `glm-5` or any other from the supported list
 
-## API Эндпоинты
+## API Endpoints
 
-### Получение списка моделей
+### Get List of Models
 
 ```bash
 GET http://127.0.0.1:8318/v1/models
 ```
 
-**Пример curl запроса:**
+**Example curl request:**
 ```bash
 curl http://localhost:8318/v1/models
 ```
 
-### Чат-комплит (OpenAI-совместимый)
+### Chat Completions (OpenAI-compatible)
 
 ```bash
 POST http://127.0.0.1:8318/v1/chat/completions
 ```
 
-**Пример curl запроса:**
+**Example curl request:**
 ```bash
 curl http://localhost:8318/v1/chat/completions \
   -H "Content-Type: application/json" \
   -d '{
     "model": "glm-4.7",
-    "messages": [{"role": "user", "content": "Привет!"}],
+    "messages": [{"role": "user", "content": "Hello!"}],
     "stream": false
   }'
 ```
 
-**Пример JSON запроса:**
+**Example JSON request:**
 ```json
 {
   "model": "glm-5",
   "messages": [
     {
       "role": "user",
-      "content": "Привет! Как дела?"
+      "content": "Hello! How are you?"
     }
   ],
   "stream": true
 }
 ```
 
-## Как это работает
+## How It Works
 
-1. Прокси-сервер автоматически считывает API ключ из `~/.iflow/settings.json`
-2. При получении запроса формирует подпись HMAC-SHA256 для авторизации в iFlow
-3. Пробрасывает запрос к iFlow API без модификации содержимого
-4. Возвращает ответ в формате, совместимом с OpenAI API
+1. The proxy server automatically reads the API key from `~/.iflow/settings.json`
+2. Upon receiving a request, it forms an HMAC-SHA256 signature for authorization in iFlow
+3. Forwards the request to iFlow API without modifying the content
+4. Returns the response in a format compatible with OpenAI API
 
-## Логирование
+## Logging
 
-Все запросы и ответы логируются в файл `proxy.log` в директории запуска прокси-сервера.
+All requests and responses are logged to the `proxy.log` file in the proxy server startup directory.
 
-## Требования
+## Requirements
 
-- **Windows** операционная система
-- Установленный iFlow CLI с активной авторизацией
-- Go 1.21+ (только для редактирования и перекомпиляции исходного кода)
+- **Windows** operating system
+- Installed iFlow CLI with active authorization
+- Go 1.21+ (only for editing and recompiling source code)
 
-## Порты
+## Ports
 
-- **8318** - порт прокси-сервера по умолчанию
+- **8318** - default proxy server port
 
 ## Troubleshooting
 
-### Ошибка "API key: read config: no such file or directory"
+### Error "API key: read config: no such file or directory"
 
-Убедитесь, что iFlow CLI установлен и вы авторизованы:
+Make sure iFlow CLI is installed and you are authorized:
 ```bash
 iflow login
 ```
 
-### Ошибка "API key empty"
+### Error "API key empty"
 
-Проверьте, что файл `~/.iflow/settings.json` содержит валидный API ключ.
+Check that the file `~/.iflow/settings.json` contains a valid API key.
 
-### Порт уже занят
+### Port Already in Use
 
-Измените порт в файле `main.go` (константа `PROXY_PORT`).
+Change the port in the `main.go` file (constant `PROXY_PORT`).
 
-## Лицензия
+## License
 
 MIT License
+
+---
+
+**Русская версия:** [README_RU.md](README_RU.md)
