@@ -93,17 +93,22 @@ type ModelsResponse struct {
 	Object string      `json:"object"`
 }
 type ModelItem struct {
-	ID, Object, OwnedBy string
-	Created             int64
+	ID      string `json:"id"`
+	Object  string `json:"object"`
+	OwnedBy string `json:"owned_by"`
+	Created int64  `json:"created"`
 }
 
 func modelsHandler(w http.ResponseWriter, r *http.Request) {
+	logToFile("→ Models request: %s %s (Path: %s)", r.Method, r.URL.Path, r.URL.Path)
+	
 	if r.URL.Path != "/v1/models" {
+		logToFile("✗ Models: Path mismatch - expected /v1/models, got %s", r.URL.Path)
 		http.Error(w, "Not Found", http.StatusNotFound)
 		return
 	}
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(ModelsResponse{
+	
+	response := ModelsResponse{
 		Object: "list",
 		Data: []ModelItem{
 			{ID: "glm-5", Object: "model", Created: 1770000000, OwnedBy: "iflow"},
@@ -114,7 +119,15 @@ func modelsHandler(w http.ResponseWriter, r *http.Request) {
 			{ID: "kimi-k2-thinking", Object: "model", Created: 1762387200, OwnedBy: "moonshot"},
 			{ID: "minimax-m2.5", Object: "model", Created: 1750000000, OwnedBy: "minimax"},
 		},
-	})
+	}
+	
+	// Логируем JSON ответ для отладки
+	jsonBytes, _ := json.MarshalIndent(response, "", "  ")
+	logToFile("← Models response: %s", string(jsonBytes))
+	
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(response)
+	logToFile("← Models: 200 OK")
 }
 
 // ─── /v1/chat/completions — ПРОСТОЙ ПРОКСИ БЕЗ ТРАНСФОРМАЦИЙ ───────────────
