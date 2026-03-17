@@ -28,7 +28,6 @@ const (
 
 var (
 	apikey      string
-	sessionID   string
 	logFilePath string
 )
 
@@ -101,34 +100,37 @@ type ModelItem struct {
 
 func modelsHandler(w http.ResponseWriter, r *http.Request) {
 	logToFile("→ Models request: %s %s (Path: %s)", r.Method, r.URL.Path, r.URL.Path)
-	
+
 	if r.URL.Path != "/v1/models" {
 		logToFile("✗ Models: Path mismatch - expected /v1/models, got %s", r.URL.Path)
 		http.Error(w, "Not Found", http.StatusNotFound)
 		return
 	}
-	
+
+	// Генерируем уникальный sessionID для запроса
+	requestSessionID := "session-" + uuid.New().String()
+
 	// Создаем запрос к iFlow API для получения списка моделей
 	userAgent := "iFlow-Cli"
 	timestamp := time.Now().UnixMilli()
-	signature := createSignature(userAgent, sessionID, timestamp, apikey)
-	
+	signature := createSignature(userAgent, requestSessionID, timestamp, apikey)
+
 	upstreamReq, err := http.NewRequest("GET", IFLOW_BASE_URL+"/models", nil)
 	if err != nil {
 		logToFile("✗ Models: Create upstream request: %v", err)
 		http.Error(w, "Create upstream: "+err.Error(), http.StatusInternalServerError)
 		return
 	}
-	
+
 	// Заголовки аутентификации для iFlow (включая специальные заголовки)
 	upstreamReq.Header.Set("Content-Type", "application/json")
 	upstreamReq.Header.Set("Authorization", "Bearer "+apikey)
 	upstreamReq.Header.Set("User-Agent", userAgent)
-	upstreamReq.Header.Set("session-id", sessionID)
+	upstreamReq.Header.Set("session-id", requestSessionID)
 	upstreamReq.Header.Set("conversation-id", "")
 	upstreamReq.Header.Set("x-iflow-timestamp", strconv.FormatInt(timestamp, 10))
 	upstreamReq.Header.Set("x-iflow-signature", signature)
-	
+
 	// Выполняем запрос
 	client := &http.Client{Timeout: 30 * time.Second}
 	resp, err := client.Do(upstreamReq)
@@ -138,7 +140,7 @@ func modelsHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	defer resp.Body.Close()
-	
+
 	// Читаем тело ответа
 	respBody, err := io.ReadAll(resp.Body)
 	if err != nil {
@@ -146,10 +148,10 @@ func modelsHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Read response: "+err.Error(), http.StatusBadGateway)
 		return
 	}
-	
+
 	// Логируем полученный ответ для отладки
 	logToFile("← Models upstream response: %s", string(respBody))
-	
+
 	// Парсим ответ от API
 	var upstreamResponse ModelsResponse
 	if err := json.Unmarshal(respBody, &upstreamResponse); err != nil {
@@ -157,7 +159,7 @@ func modelsHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Parse response: "+err.Error(), http.StatusBadGateway)
 		return
 	}
-	
+
 	// Добавляем захардкоженные модели, которые должны быть доступны
 	// (даже если они не возвращаются в списке API, они могут работать через прокси)
 	hardcodedModels := []ModelItem{
@@ -167,35 +169,35 @@ func modelsHandler(w http.ResponseWriter, r *http.Request) {
 		{ID: "kimi-k2-thinking", Object: "model", Created: 1762387200, OwnedBy: "moonshot"},
 		{ID: "minimax-m2.5", Object: "model", Created: 1750000000, OwnedBy: "minimax"},
 	}
-	
+
 	// Объединяем списки, убирая дубликаты
 	modelMap := make(map[string]ModelItem)
-	
+
 	// Сначала добавляем модели из API
 	for _, model := range upstreamResponse.Data {
 		modelMap[model.ID] = model
 	}
-	
+
 	// Затем добавляем захардкоженные модели (они перезапишут существующие, если есть)
 	for _, model := range hardcodedModels {
 		modelMap[model.ID] = model
 	}
-	
+
 	// Формируем итоговый список
 	var allModels []ModelItem
 	for _, model := range modelMap {
 		allModels = append(allModels, model)
 	}
-	
+
 	response := ModelsResponse{
 		Object: "list",
 		Data:   allModels,
 	}
-	
+
 	// Логируем JSON ответ для отладки
 	jsonBytes, _ := json.MarshalIndent(response, "", "  ")
 	logToFile("← Models response: %s", string(jsonBytes))
-	
+
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(response)
 	logToFile("← Models: %d", resp.StatusCode)
@@ -218,13 +220,17 @@ func proxyHandler(w http.ResponseWriter, r *http.Request) {
 
 	logToFile("→ Request: %s %s", r.Method, r.URL.Path)
 
+	// Генерируем уникальный sessionID для запроса
+	requestSessionID := "session-" + uuid.New().String()
+
 	// Готовим запрос к iFlow: тело передаём без изменений
 	userAgent := "iFlow-Cli"
 	timestamp := time.Now().UnixMilli()
-	signature := createSignature(userAgent, sessionID, timestamp, apikey)
+	signature := createSignature(userAgent, requestSessionID, timestamp, apikey)
 
 	upstreamReq, err := http.NewRequest("POST", IFLOW_BASE_URL+"/chat/completions", bytes.NewReader(body))
 	if err != nil {
+		logToFile("✗ Request: Create upstream request: %v", err)
 		http.Error(w, "Create upstream: "+err.Error(), http.StatusInternalServerError)
 		return
 	}
@@ -233,15 +239,16 @@ func proxyHandler(w http.ResponseWriter, r *http.Request) {
 	upstreamReq.Header.Set("Content-Type", "application/json")
 	upstreamReq.Header.Set("Authorization", "Bearer "+apikey)
 	upstreamReq.Header.Set("User-Agent", userAgent)
-	upstreamReq.Header.Set("session-id", sessionID)
+	upstreamReq.Header.Set("session-id", requestSessionID)
 	upstreamReq.Header.Set("conversation-id", "")
 	upstreamReq.Header.Set("x-iflow-timestamp", strconv.FormatInt(timestamp, 10))
 	upstreamReq.Header.Set("x-iflow-signature", signature)
 
-	// Выполняем запрос
-	client := &http.Client{Timeout: 120 * time.Second}
+	// Выполняем запрос (увеличен таймаут до 300с)
+	client := &http.Client{Timeout: 300 * time.Second}
 	resp, err := client.Do(upstreamReq)
 	if err != nil {
+		logToFile("✗ Request: Upstream request error: %v", err)
 		http.Error(w, "Upstream: "+err.Error(), http.StatusBadGateway)
 		return
 	}
@@ -257,20 +264,31 @@ func proxyHandler(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	// Определяем, стриминг ли это
-	isStream := resp.Header.Get("Content-Type") == "text/event-stream" ||
-		bytes.Contains(body, []byte(`"stream":true`))
+	// Определяем тип ответа
+	isStream := resp.Header.Get("Content-Type") == "text/event-stream"
+
+	// Если мы ожидаем стрим, но пришла ошибка (не 200), то это точно не стрим
+	if resp.StatusCode != http.StatusOK && !isStream {
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(resp.StatusCode)
+		io.Copy(w, resp.Body)
+		logToFile("← Response (Error): %d", resp.StatusCode)
+		return
+	}
 
 	if isStream {
 		w.Header().Set("Content-Type", "text/event-stream")
 		w.Header().Set("Cache-Control", "no-cache")
 		w.Header().Set("Connection", "keep-alive")
+		w.WriteHeader(resp.StatusCode)
 
-		// 🔥 ПРОСТО пробрасываем байты, БЕЗ парсинга и модификаций
 		reader := bufio.NewReader(resp.Body)
 		for {
 			line, err := reader.ReadBytes('\n')
 			if err != nil {
+				if err != io.EOF {
+					logToFile("✗ Stream: Read error: %v", err)
+				}
 				break
 			}
 			w.Write(line)
@@ -281,7 +299,6 @@ func proxyHandler(w http.ResponseWriter, r *http.Request) {
 	} else {
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(resp.StatusCode)
-		// 🔥 ПРОСТО копируем тело ответа, БЕЗ парсинга
 		io.Copy(w, resp.Body)
 	}
 
@@ -298,8 +315,6 @@ func main() {
 	if err != nil {
 		log.Fatalf("API key: %v", err)
 	}
-
-	sessionID = "session-" + uuid.New().String()
 
 	log.Printf("✓ Simple proxy started (no content transformation)")
 	log.Printf("✓ Logging to: %s", logFilePath)
