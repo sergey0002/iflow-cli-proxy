@@ -1,4 +1,4 @@
-# iFlow Proxy Server
+# iFlow CLI  -> compatible with OpenAI API Proxy Server
 
 A simple proxy server written in Go that provides **completely free unlimited** access to GLM-5 and other models available in [iFlow CLI](https://iflow.cn) for your own purposes in a format compatible with OpenAI API.
 
@@ -68,7 +68,7 @@ If you want to change settings (ports, paths, etc.):
 
 ![Registration step 2](reg2.jpg)
 
-3. Follow the instructions to create an account
+1. Follow the instructions to create an account
 
 ### Step 2: Install iFlow CLI
 
@@ -93,18 +93,22 @@ Follow the instructions to authorize via the website.
 Two options are available to start the proxy server:
 
 **Option 1: Quick Start (without recompilation)**
+
 ```bash
 start.bat
 ```
+
 This file kills the old process and starts the already compiled `iflow-proxy.exe`.
 
 **Option 2: Recompile and Start**
+
 ```bash
 rebuild-and-start.bat
 ```
+
 This file recompiles the program and starts it.
 
-The proxy server will start at: **http://127.0.0.1:8318**
+The proxy server will start at: **<http://127.0.0.1:8318>**
 
 ### Step 5: Configure Kilo Code
 
@@ -112,9 +116,11 @@ The proxy server will start at: **http://127.0.0.1:8318**
 
 1. Open Kilo Code settings
 2. In the **API Endpoint** field, specify:
+
    ```
    http://127.0.0.1:8318/v1
    ```
+
 3. In the **API Token** field, enter **any value** (e.g., `dummy-token`)
    - The token is not verified by the proxy server, authorization occurs via iFlow CLI
 4. Select a model: `glm-5` or any other from the supported list
@@ -128,6 +134,7 @@ GET http://127.0.0.1:8318/v1/models
 ```
 
 **Example curl request:**
+
 ```bash
 curl http://localhost:8318/v1/models
 ```
@@ -139,6 +146,7 @@ POST http://127.0.0.1:8318/v1/chat/completions
 ```
 
 **Example curl request:**
+
 ```bash
 curl http://localhost:8318/v1/chat/completions \
   -H "Content-Type: application/json" \
@@ -150,6 +158,7 @@ curl http://localhost:8318/v1/chat/completions \
 ```
 
 **Example JSON request:**
+
 ```json
 {
   "model": "glm-5",
@@ -189,6 +198,7 @@ All requests and responses are logged to the `proxy.log` file in the proxy serve
 ### Error "API key: read config: no such file or directory"
 
 Make sure iFlow CLI is installed and you are authorized:
+
 ```bash
 iflow login
 ```

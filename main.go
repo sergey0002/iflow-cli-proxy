@@ -21,7 +21,7 @@ import (
 )
 
 const (
-	IFLOW_BASE_URL = "https://apis.iflow.cn/v1" // ✅ убраны пробелы
+	IFLOW_BASE_URL = "https://apis.iflow.cn/v1" // эндпоинт из CLI
 	PROXY_PORT     = "8318"
 	LOG_FILE       = "proxy.log"
 )
@@ -35,6 +35,7 @@ type IFlowSettings struct {
 	ApiKey string `json:"apiKey"`
 }
 
+// getIFlowAPIKey читает API ключ из файла настроек пользователя (~/.iflow/settings.json).
 func getIFlowAPIKey() (string, error) {
 	usr, err := user.Current()
 	if err != nil {
@@ -55,6 +56,8 @@ func getIFlowAPIKey() (string, error) {
 	return settings.ApiKey, nil
 }
 
+// createSignature создает HMAC-SHA256 подпись для аутентификации в iFlow API.
+// Параметры включают User-Agent, sessionID и временную метку.
 func createSignature(userAgent, sessionID string, timestamp int64, key string) string {
 	payload := fmt.Sprintf("%s:%s:%d", userAgent, sessionID, timestamp)
 	h := hmac.New(sha256.New, []byte(key))
@@ -62,6 +65,7 @@ func createSignature(userAgent, sessionID string, timestamp int64, key string) s
 	return hex.EncodeToString(h.Sum(nil))
 }
 
+// logToFile записывает отладочную информацию в файл proxy.log вместе с меткой времени.
 func logToFile(format string, args ...interface{}) {
 	f, err := os.OpenFile(logFilePath, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
 	if err != nil {
@@ -73,6 +77,8 @@ func logToFile(format string, args ...interface{}) {
 	fmt.Fprintf(f, "[%s] %s\n", ts, fmt.Sprintf(format, args...))
 }
 
+// corsMiddleware добавляет HTTP заголовки для поддержки Cross-Origin Resource Sharing.
+// Позволяет браузерам и расширениям (Kilo Code и др.) обращаться к прокси напрямую.
 func corsMiddleware(next http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Access-Control-Allow-Origin", "*")
@@ -122,7 +128,7 @@ func modelsHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Заголовки аутентификации для iFlow (включая специальные заголовки)
+	// Заголовки аутентификации для iFlow все как в iflow CLI (включая специальные заголовки)
 	upstreamReq.Header.Set("Content-Type", "application/json")
 	upstreamReq.Header.Set("Authorization", "Bearer "+apikey)
 	upstreamReq.Header.Set("User-Agent", userAgent)
@@ -161,7 +167,7 @@ func modelsHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Добавляем захардкоженные модели, которые должны быть доступны
-	// (даже если они не возвращаются в списке API, они могут работать через прокси)
+	// (даже если они не возвращаются в списке API, они будут  работать через прокси - проверенно практикой =)
 	hardcodedModels := []ModelItem{
 		{ID: "glm-5", Object: "model", Created: 1770000000, OwnedBy: "iflow"},
 		{ID: "glm-4.7", Object: "model", Created: 1760000000, OwnedBy: "iflow"},
